@@ -11,12 +11,14 @@ def truncate_colormap(cmap, minval=0.3, maxval=1.0, n=100):
     return new_cmap
 
 
-map_df = gpd.read_file("KOM_MULTIPART.shp")
-data_to_plot_df = pd.read_csv("Alle_MSE.csv")
+column = "err_EOU"
 
+map_df = gpd.read_file("KOM_MULTIPART.shp")
+data_to_plot_df = pd.read_csv("data/Alle_lambda.csv")
+data_to_plot_df = pd.read_csv("data/Alle_MSE.csv")
 map_df["kommune"] = map_df["KOMNAVN"].str.lower()
 data_to_plot_df["kommune"] = data_to_plot_df["kommune"].str.lower()
-data_to_plot_df["err_SOU_log"]=np.log2(data_to_plot_df["err_SOU"])
+data_to_plot_df[f"{column}_log"]=np.log2(data_to_plot_df[f"{column}"])
 
 
 ### Her ændres kort dataframe
@@ -24,13 +26,19 @@ map_df = map_df.drop(54, axis = 0).reset_index(drop=True)
 map_df["kommune"] = map_df["kommune"].replace("aarhus", "århus")
 map_df = map_df.sort_values(by="kommune",ignore_index=True)
 data_to_plot_df = data_to_plot_df.sort_values(by="kommune",ignore_index=True)
-#remove christianssø
 
+#set outliers to nan
+data_to_plot_df.at[19,"err_SOU"]=np.nan #6.004
+data_to_plot_df.at[19,"err_EOU"]=np.nan #2.26119
+data_to_plot_df.at[19,"err_system"]=np.nan #31.78
+data_to_plot_df.at[74,"err_system"]=np.nan #122.69 samsø
+data_to_plot_df.at[56,"err_system"]=np.nan #20.518 læsø
+data_to_plot_df.at[14,"err_system"]=np.nan # 5.5 fanø
 
 ##### Her ændres dataen der skal plottes
 tmp=[]
 for index,row in data_to_plot_df.iterrows():
-    tmp.append((row["kommune"],row["err_SOU"]))
+    tmp.append((row["kommune"],row[f"{column}"]))
 
 
 ##### Her tilføjes dataen til kort df
@@ -49,17 +57,21 @@ map_df["err"] = pd.DataFrame(data_to_add)
 
 ####Her plottes kortet
 #"{%.2%%}"
+
+fig,ax = plt.subplots()
+
 cmap = truncate_colormap(cmap = plt.get_cmap("Reds"))
-map_df.to_crs(epsg=4326).plot(column=data_to_plot_df["err_SOU_log"], cmap = cmap, legend = True,                              missing_kwds={
+map_df.to_crs(epsg=4326).plot(column=data_to_plot_df[f"{column}"],ax=ax, cmap = cmap, legend = True, missing_kwds={
         "color": "lightgrey",
-        "edgecolor": "blue",
-        "hatch": "///",
+        #"edgecolor": "blue",
+        #"hatch": "///",
         "label": "Missing values",
     })
-plt.title("")
+plt.title(f"MSE values of the {column.split('_')[1]} process")
 #plt.xlabel("Længdegrad")
 #plt.ylabel("Breddegrad")
 plt.axis('off')
+
 #plt.xticks(color="white")
 
 plt.show()
