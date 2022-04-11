@@ -14,8 +14,8 @@ def truncate_colormap(cmap, minval=0.3, maxval=1.0, n=100):
         cmap(np.linspace(minval, maxval, n)))
     return new_cmap
 
-kort = gpd.read_file("dkdat//KOM_MULTIPART.shp")
-data = pd.read_excel("dkdat//ejendomspriser.xlsx")
+kort = gpd.read_file("map_data/KOM_MULTIPART.shp")
+data = pd.read_excel("map_data/ejendomspriser.xlsx")
 
 
 ## Clean data
