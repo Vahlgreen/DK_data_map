@@ -13,7 +13,7 @@ def truncate_colormap(cmap, minval=0.3, maxval=1.0, n=100):
 
 column = "lambda_SOU"
 
-map_df = gpd.read_file("KOM_MULTIPART.shp")
+map_df = gpd.read_file("../map_data/KOM_MULTIPART.shp")
 data_to_plot_df = pd.read_csv("data/Alle_lambda.csv")
 #data_to_plot_df = pd.read_csv("data/Alle_MSE.csv")
 map_df["kommune"] = map_df["KOMNAVN"].str.lower()

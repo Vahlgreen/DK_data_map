@@ -11,7 +11,7 @@ def truncate_colormap(cmap, minval=0.3, maxval=1.0, n=100):
     return new_cmap
 
 
-df = gpd.read_file("KOM_MULTIPART.shp")
+df = gpd.read_file("../map_data/KOM_MULTIPART.shp")
 data = pd.read_excel("Regression_af_hver_enkelt_kommune.xlsx")
 df = df.drop(54, axis = 0).reset_index()
 #df = df.sort_values(by="KOMNAVN")
